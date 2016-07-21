@@ -3,6 +3,7 @@ package daemon
 import (
 	// Importing packages here only to make sure their init gets called and
 	// therefore they register themselves to the logdriver factory.
+	_ "github.com/awakenetworks/docker/daemon/logger/journald_semistruct"
 	_ "github.com/docker/docker/daemon/logger/awslogs"
 	_ "github.com/docker/docker/daemon/logger/fluentd"
 	_ "github.com/docker/docker/daemon/logger/gcplogs"
