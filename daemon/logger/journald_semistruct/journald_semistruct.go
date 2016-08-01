@@ -10,6 +10,7 @@ import (
 	"sync"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/awakenetworks/semistruct-parse"
 	"github.com/coreos/go-systemd/journal"
 	"github.com/docker/docker/daemon/logger"
 	"github.com/docker/docker/daemon/logger/loggerutils"
@@ -84,10 +85,44 @@ func validateLogOpt(cfg map[string]string) error {
 }
 
 func (s *journald) Log(msg *logger.Message) error {
-	if msg.Source == "stderr" {
-		return journal.Send(string(msg.Line), journal.PriErr, s.vars)
+	journald_vars := s.vars
+	semistruct_line := nil
+
+	// Does our message begin with the sentinel? If so let's try to
+	// parse it, if not let's just send it right along anyway.
+	line := string(msg.Line)
+
+	// Peak at the first few characters, if they start with the
+	// sentinel then attempt a parse, otherwise don't parse and just
+	// shove the whole line out to journald.
+	if line[:2] == "!<" {
+		p := ParseSemistruct()
+		semistruct_line = p.ParseString(line)
 	}
-	return journal.Send(string(msg.Line), journal.PriInfo, s.vars)
+
+	// If we have a successful parse, let's set the journal priority
+	// using the integer priority value from the semistructured log
+	// line, if not let's just set it to Err or Info as-per the stock
+	// journald logging driver.
+	var priority int
+
+	if semistruct_line != nil {
+		priority = semistruct_parsed.priority
+		for k, v := range priority.attrs {
+			journald_vars[k] = v
+		}
+	} else {
+		if msg.Source == "stderr" {
+			priority = journal.PriErr
+		} else {
+			priority = journal.PriInfo
+		}
+	}
+
+	// NOTE: we always send the whole line to journald even though
+	// it's semi-structured, the fact that we have some structure to
+	// parse just gives us more fields to filter by with journalctl.
+	return journal.Send(line, priority, journald_vars)
 }
 
 func (s *journald) Name() string {
