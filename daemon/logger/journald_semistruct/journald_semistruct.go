@@ -10,6 +10,7 @@ import (
 	"sync"
 
 	"github.com/Sirupsen/logrus"
+	cp "github.com/andyleap/parser"
 	sp "github.com/awakenetworks/semistruct-parser"
 	"github.com/coreos/go-systemd/journal"
 	"github.com/docker/docker/daemon/logger"
@@ -86,7 +87,7 @@ func validateLogOpt(cfg map[string]string) error {
 
 func (s *journald) Log(msg *logger.Message) error {
 
-	var semistruct_line sp.Semistruct_log
+	var semistruct_line cp.Match
 
 	journald_vars := s.vars
 
@@ -106,7 +107,7 @@ func (s *journald) Log(msg *logger.Message) error {
 	// using the integer priority value from the semistructured log
 	// line, if not let's just set it to Err or Info as-per the stock
 	// journald logging driver.
-	var priority int
+	var priority journal.Priority
 
 	if semistruct_line != nil {
 		priority = journal.Priority(semistruct_line.priority)
