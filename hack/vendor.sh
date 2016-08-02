@@ -5,6 +5,10 @@ cd "$(dirname "$BASH_SOURCE")/.."
 rm -rf vendor/
 source 'hack/.vendor-helpers.sh'
 
+# semistruct-parse
+clone git github.com/andyleap/parser db5a13a7cd464f69f3570d27ae1e4ee7c3d76092
+clone git github.com/awakenetworks/semistruct-parser 274a8c08cd0f518d10e40f99b14a331f901e1936
+
 # the following lines are in sorted order, FYI
 clone git github.com/Azure/go-ansiterm 70b2c90b260171e829f1ebd7c17f600c11858dbe
 clone git github.com/Microsoft/hcsshim v0.1.0
