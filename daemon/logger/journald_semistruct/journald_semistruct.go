@@ -110,8 +110,10 @@ func (s *journald) Log(msg *logger.Message) error {
 	var priority journal.Priority
 
 	if semistruct_line != nil {
-		priority = journal.Priority(semistruct_line.priority)
-		for k, v := range semistruct_line.attrs {
+		res := semistruct_line.(s.Semistruct_line)
+
+		priority = journal.Priority(res.priority)
+		for k, v := range res.attrs {
 			journald_vars[k] = v
 		}
 	} else {
