@@ -10,7 +10,7 @@ import (
 	"sync"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/awakenetworks/semistruct-parse"
+	semistruct "github.com/awakenetworks/semistruct-parser"
 	"github.com/coreos/go-systemd/journal"
 	"github.com/docker/docker/daemon/logger"
 	"github.com/docker/docker/daemon/logger/loggerutils"
@@ -96,7 +96,7 @@ func (s *journald) Log(msg *logger.Message) error {
 	// sentinel then attempt a parse, otherwise don't parse and just
 	// shove the whole line out to journald.
 	if line[:2] == "!<" {
-		p := ParseSemistruct()
+		p := semistruct.ParseSemistruct()
 		semistruct_line = p.ParseString(line)
 	}
 
