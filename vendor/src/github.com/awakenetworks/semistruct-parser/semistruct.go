@@ -4,9 +4,9 @@ import "strconv"
 import p "github.com/andyleap/parser"
 
 type Semistruct_log struct {
-	priority int64
-	tags     []string
-	attrs    map[string]string
+	Priority int64
+	Tags     []string
+	Attrs    map[string]string
 }
 
 type kv_pair struct {
