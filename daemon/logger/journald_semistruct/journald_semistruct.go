@@ -10,7 +10,7 @@ import (
 	"sync"
 
 	"github.com/Sirupsen/logrus"
-	s "github.com/awakenetworks/semistruct-parser"
+	sp "github.com/awakenetworks/semistruct-parser"
 	"github.com/coreos/go-systemd/journal"
 	"github.com/docker/docker/daemon/logger"
 	"github.com/docker/docker/daemon/logger/loggerutils"
@@ -86,7 +86,7 @@ func validateLogOpt(cfg map[string]string) error {
 
 func (s *journald) Log(msg *logger.Message) error {
 
-	var semistruct_line s.semistruct_log
+	var semistruct_line sp.semistruct_log
 
 	journald_vars := s.vars
 
@@ -98,8 +98,8 @@ func (s *journald) Log(msg *logger.Message) error {
 	// sentinel then attempt a parse, otherwise don't parse and just
 	// shove the whole line out to journald.
 	if line[:2] == "!<" {
-		p := s.ParseSemistruct()
-		semistruct_line, _ = p.ParseString(line)
+		parser := sp.ParseSemistruct()
+		semistruct_line, _ = parser.ParseString(line)
 	}
 
 	// If we have a successful parse, let's set the journal priority
@@ -109,8 +109,8 @@ func (s *journald) Log(msg *logger.Message) error {
 	var priority int
 
 	if semistruct_line != nil {
-		priority = journal.Priority(s.semistruct_parsed.priority)
-		for k, v := range s.semistruct_parsed.attrs {
+		priority = journal.Priority(sp.semistruct_parsed.priority)
+		for k, v := range sp.semistruct_parsed.attrs {
 			journald_vars[k] = v
 		}
 	} else {
