@@ -86,7 +86,7 @@ func validateLogOpt(cfg map[string]string) error {
 
 func (s *journald) Log(msg *logger.Message) error {
 
-	var semistruct_line sp.semistruct_log
+	var semistruct_line sp.Semistruct_log
 
 	journald_vars := s.vars
 
@@ -109,8 +109,8 @@ func (s *journald) Log(msg *logger.Message) error {
 	var priority int
 
 	if semistruct_line != nil {
-		priority = journal.Priority(sp.semistruct_parsed.priority)
-		for k, v := range sp.semistruct_parsed.attrs {
+		priority = journal.Priority(semistruct_line.priority)
+		for k, v := range semistruct_line.attrs {
 			journald_vars[k] = v
 		}
 	} else {

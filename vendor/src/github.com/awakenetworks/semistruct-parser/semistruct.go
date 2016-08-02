@@ -3,7 +3,7 @@ package semistruct
 import "strconv"
 import p "github.com/andyleap/parser"
 
-type semistruct_log struct {
+type Semistruct_log struct {
 	priority int64
 	tags     []string
 	attrs    map[string]string
@@ -43,7 +43,7 @@ func ParseSemistruct() *p.Grammar {
 		tg := p.GetTag(m, "tags").([]string)
 		at := p.GetTag(m, "attrs").(map[string]string)
 
-		return semistruct_log{pr, tg, at}, nil
+		return Semistruct_log{pr, tg, at}, nil
 	})
 
 	return o
