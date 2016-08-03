@@ -91,14 +91,12 @@ func (s *journald) Log(msg *logger.Message) error {
 
 	journald_vars := s.vars
 
-	// Does our message begin with the sentinel? If so let's try to
-	// parse it, if not let's just send it right along anyway.
 	line := string(msg.Line)
 
 	// Peak at the first few characters, if they start with the
 	// sentinel then attempt a parse, otherwise don't parse and just
 	// shove the whole line out to journald.
-	if line[:2] == "!<" {
+	if len(line) > 2 && line[:2] == "!<" {
 		parser := sp.ParseSemistruct()
 		semistruct_line, _ = parser.ParseString(line)
 	}
