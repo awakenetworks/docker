@@ -124,7 +124,7 @@ func (s *journald) Log(msg *logger.Message) error {
 			if len(journald_vars) <= 7 {
 				journald_vars[k] = v
 			} else {
-				msg := fmt.Sprintf("Message logged with too many tags: %s", line)
+				msg := fmt.Sprintf("Message logged with too many attributes: %s", line)
 				journal.Send(msg, journal.PriErr, s.vars)
 				break
 			}
