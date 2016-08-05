@@ -121,13 +121,13 @@ func (s *journald) Log(msg *logger.Message) error {
 			// custom docker fields plus the tag field to account for
 			// this limit:
 			// https://github.com/systemd/systemd/blob/master/src/journal/journald-server.h#L159
-			if len(journald_vars) <= 7 {
-				journald_vars[k] = v
-			} else {
-				msg := fmt.Sprintf("Message logged with too many attributes: %s", line)
-				journal.Send(msg, journal.PriErr, s.vars)
-				break
-			}
+			//			if len(journald_vars) <= 7 {
+			journald_vars[k] = v
+			//			} else {
+			//				msg := fmt.Sprintf("Message logged with too many attributes: %s", line)
+			//				journal.Send(msg, journal.PriErr, s.vars)
+			//				break
+			//			}
 		}
 	} else {
 		if msg.Source == "stderr" {
