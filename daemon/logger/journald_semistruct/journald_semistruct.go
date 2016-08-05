@@ -115,19 +115,7 @@ func (s *journald) Log(msg *logger.Message) error {
 		journald_vars["TAGS"] = strings.Join(res.Tags, ":")
 
 		for k, v := range res.Attrs {
-
-			// journald has a hard limit on the number of custom
-			// fields you can insert and I'm subtracting the number of
-			// custom docker fields plus the tag field to account for
-			// this limit:
-			// https://github.com/systemd/systemd/blob/master/src/journal/journald-server.h#L159
-			//			if len(journald_vars) <= 7 {
 			journald_vars[k] = v
-			//			} else {
-			//				msg := fmt.Sprintf("Message logged with too many attributes: %s", line)
-			//				journal.Send(msg, journal.PriErr, s.vars)
-			//				break
-			//			}
 		}
 	} else {
 		if msg.Source == "stderr" {
