@@ -22,6 +22,7 @@ const name = "journald_semistruct"
 type journald struct {
 	vars    map[string]string // additional variables and values to send to the journal along with the log message
 	readers readerList
+	parser  *cp.Grammar
 }
 
 type readerList struct {
@@ -63,11 +64,15 @@ func New(ctx logger.Context) (logger.Logger, error) {
 		"CONTAINER_NAME":    name,
 		"CONTAINER_TAG":     tag,
 	}
+
 	extraAttrs := ctx.ExtraAttributes(strings.ToTitle)
+
 	for k, v := range extraAttrs {
 		vars[k] = v
 	}
-	return &journald{vars: vars, readers: readerList{readers: make(map[*logger.LogWatcher]*logger.LogWatcher)}}, nil
+
+	pr := sp.ParseSemistruct()
+	return &journald{vars: vars, parser: pr, readers: readerList{readers: make(map[*logger.LogWatcher]*logger.LogWatcher)}}, nil
 }
 
 // We don't actually accept any options, but we have to supply a callback for
@@ -97,8 +102,7 @@ func (s *journald) Log(msg *logger.Message) error {
 	// sentinel then attempt a parse, otherwise don't parse and just
 	// shove the whole line out to journald.
 	if len(line) > 2 && line[:2] == "!<" {
-		parser := sp.ParseSemistruct()
-		semistruct_line, _ = parser.ParseString(line)
+		semistruct_line, _ = s.parser.ParseString(line)
 	}
 
 	// If we have a successful parse, let's set the journal priority
