@@ -101,7 +101,7 @@ func (s *journald) Log(msg *logger.Message) error {
 	// journald logging driver.
 	var priority journal.Priority
 
-	if semistructLine, err := parseIfSemistruct(line); semistructLine != nil {
+	if semistructLine, err := parseSemistruct(line); semistructLine != nil {
 		res := semistructLine.(sp.Semistruct_log)
 
 		priority = journal.Priority(res.Priority)
