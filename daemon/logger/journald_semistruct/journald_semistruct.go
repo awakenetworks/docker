@@ -17,7 +17,7 @@ import (
 	"github.com/docker/docker/daemon/logger/loggerutils"
 )
 
-const name = "journald_semistruct"
+const name = "journald-semistruct"
 
 type journald struct {
 	vars    map[string]string // additional variables and values to send to the journal along with the log message
