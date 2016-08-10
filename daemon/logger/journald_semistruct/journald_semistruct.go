@@ -11,7 +11,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	cp "github.com/andyleap/parser"
-	sp "github.com/awakenetworks/semistruct-parser"
+	semistruct "github.com/awakenetworks/semistruct-parser"
 	"github.com/coreos/go-systemd/journal"
 	"github.com/docker/docker/daemon/logger"
 	"github.com/docker/docker/daemon/logger/loggerutils"
@@ -91,19 +91,9 @@ func validateLogOpt(cfg map[string]string) error {
 }
 
 func (s *journald) Log(msg *logger.Message) error {
-
-	var semistruct_line cp.Match
-
-	journald_vars := s.vars
+	journaldVars := s.vars
 
 	line := string(msg.Line)
-
-	// Peak at the first few characters, if they start with the
-	// sentinel then attempt a parse, otherwise don't parse and just
-	// shove the whole line out to journald.
-	if len(line) > 2 && line[:2] == "!<" {
-		semistruct_line, _ = s.parser.ParseString(line)
-	}
 
 	// If we have a successful parse, let's set the journal priority
 	// using the integer priority value from the semistructured log
@@ -111,17 +101,19 @@ func (s *journald) Log(msg *logger.Message) error {
 	// journald logging driver.
 	var priority journal.Priority
 
-	if semistruct_line != nil {
-		res := semistruct_line.(sp.Semistruct_log)
+	if semistructLine, err := parseIfSemistruct(line); semistructLine != nil {
+		res := semistructLine.(sp.Semistruct_log)
 
 		priority = journal.Priority(res.Priority)
 
-		journald_vars["TAGS"] = strings.Join(res.Tags, ":")
+		journaldVars["TAGS"] = strings.Join(res.Tags, ":")
 
 		for k, v := range res.Attrs {
-			journald_vars[k] = v
+			journaldVars[k] = v
 		}
 	} else {
+		logrus.Errorf("failed to parse semistructured log line: %v", err)
+
 		if msg.Source == "stderr" {
 			priority = journal.PriErr
 		} else {
@@ -132,7 +124,22 @@ func (s *journald) Log(msg *logger.Message) error {
 	// NOTE: we always send the whole line to journald even though
 	// it's semi-structured, the fact that we have some structure to
 	// parse just gives us more fields to filter by with journalctl.
-	return journal.Send(line, priority, journald_vars)
+	return journal.Send(line, priority, journaldVars)
+}
+
+func parseSemistruct(s string) cp.Match {
+	// Peak at the first few characters, if they start with the
+	// sentinel then attempt a parse, otherwise don't parse and just
+	// shove the whole line out to journald.
+	if len(line) > 2 && line[:2] == "!<" {
+		semistructLine, err = s.parser.ParseString(line)
+
+		if err {
+			return nil, err
+		}
+
+		return semistructLine, nil
+	}
 }
 
 func (s *journald) Name() string {
