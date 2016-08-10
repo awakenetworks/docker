@@ -132,13 +132,11 @@ func parseSemistruct(s string) cp.Match {
 	// sentinel then attempt a parse, otherwise don't parse and just
 	// shove the whole line out to journald.
 	if len(line) > 2 && line[:2] == "!<" {
-		semistructLine, err = s.parser.ParseString(line)
-
-		if err {
+		if semistructLine, err = s.parser.ParseString(line); err != nil {
 			return nil, err
+		} else {
+			return semistructLine, nil
 		}
-
-		return semistructLine, nil
 	}
 }
 
