@@ -71,7 +71,7 @@ func New(ctx logger.Context) (logger.Logger, error) {
 		vars[k] = v
 	}
 
-	pr := sp.ParseSemistruct()
+	pr := semistruct.NewLogParser()
 	return &journald{vars: vars, parser: pr, readers: readerList{readers: make(map[*logger.LogWatcher]*logger.LogWatcher)}}, nil
 }
 
@@ -102,7 +102,7 @@ func (s *journald) Log(msg *logger.Message) error {
 	var priority journal.Priority
 
 	if semistructLine, err := parseSemistruct(line); err == nil && semistructLine != nil {
-		res := semistructLine.(sp.Semistruct_log)
+		res := semistructLine.(semistruct.Log)
 
 		priority = journal.Priority(res.Priority)
 
