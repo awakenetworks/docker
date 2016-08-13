@@ -102,7 +102,7 @@ func (s *journald) Log(msg *logger.Message) error {
 	var priority journal.Priority
 
 	if parsedLog, err := parseSemistruct(line, s.parser); err == nil && parsedLog != nil {
-		res, ok := parsedLog.(semistruct.Log)
+		res, ok := parsedLog.(*semistruct.Log)
 
 		if ok {
 			priority = journal.Priority(res.Priority)
