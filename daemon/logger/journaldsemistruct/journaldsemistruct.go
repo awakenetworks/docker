@@ -5,16 +5,16 @@
 package journaldsemistruct
 
 import (
+	"errors"
 	"fmt"
-	"strings"
-	"sync"
-
 	"github.com/Sirupsen/logrus"
 	cp "github.com/andyleap/parser"
 	semistruct "github.com/awakenetworks/semistruct-parser"
 	"github.com/coreos/go-systemd/journal"
 	"github.com/docker/docker/daemon/logger"
 	"github.com/docker/docker/daemon/logger/loggerutils"
+	"strings"
+	"sync"
 )
 
 const name = "journald-semistruct"
@@ -129,14 +129,14 @@ func parseSemistruct(s string, parser *cp.Grammar) (cp.Match, error) {
 	// Peak at the first few characters, if they start with the
 	// sentinel then attempt a parse
 	if len(s) > 2 && s[:2] == "!<" {
-		if parsedLog, err := parser.ParseString(s); err != nil {
+		if parsedLog, err := parser.ParseString(s); err != nil && parsedLog == nil {
 			logrus.Errorf("failed to parse semistructured log line: %v", err)
 			return nil, err
 		} else {
 			return parsedLog, nil
 		}
 	} else {
-		return nil, nil
+		return nil, errors.New("sentinel not seen")
 	}
 }
 
