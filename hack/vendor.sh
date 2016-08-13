@@ -5,6 +5,8 @@ cd "$(dirname "$BASH_SOURCE")/.."
 rm -rf vendor/
 source 'hack/.vendor-helpers.sh'
 
+
+
 # the following lines are in sorted order, FYI
 clone git github.com/Azure/go-ansiterm 70b2c90b260171e829f1ebd7c17f600c11858dbe
 clone git github.com/Microsoft/hcsshim v0.1.0
@@ -91,4 +93,10 @@ clone git google.golang.org/cloud dae7e3d993bc3812a2185af60552bb6b847e52a0 https
 
 # containerd
 clone git github.com/docker/containerd 9dc2b3273db42c75368988a3885a3afd770069d9
+
+# semistruct-parse
+clone git github.com/andyleap/parser db5a13a7cd464f69f3570d27ae1e4ee7c3d76092
+clone git github.com/awakenetworks/semistruct-parser 65cb47243d08e6c8c67308fc274029a7ce1e3dec
+clone git github.com/leanovate/gopter 2dd77d26c7d5f346abfbf7247ad9bd7efbb85c3a
+
 clean

@@ -13,8 +13,9 @@ import (
 )
 
 var validDrivers = map[string]bool{
-	"json-file": true,
-	"journald":  true,
+	"json-file":           true,
+	"journald":            true,
+	"journald-semistruct": true,
 }
 
 // CmdLogs fetches the logs of a given container.
