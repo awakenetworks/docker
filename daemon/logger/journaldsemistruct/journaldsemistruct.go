@@ -124,7 +124,7 @@ func (s *journald) Log(msg *logger.Message) error {
 }
 
 func defaultPriority(source string) journal.Priority {
-	if msg.Source == "stderr" {
+	if source == "stderr" {
 		return journal.PriErr
 	} else {
 		return journal.PriInfo
