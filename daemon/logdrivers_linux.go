@@ -8,7 +8,7 @@ import (
 	_ "github.com/docker/docker/daemon/logger/gcplogs"
 	_ "github.com/docker/docker/daemon/logger/gelf"
 	_ "github.com/docker/docker/daemon/logger/journald"
-	_ "github.com/docker/docker/daemon/logger/journald_semistruct"
+	_ "github.com/docker/docker/daemon/logger/journaldsemistruct"
 	_ "github.com/docker/docker/daemon/logger/jsonfilelog"
 	_ "github.com/docker/docker/daemon/logger/splunk"
 	_ "github.com/docker/docker/daemon/logger/syslog"
