@@ -1,6 +1,6 @@
 // +build !linux
 
-package journald_semistruct
+package journaldsemistruct
 
 type journald struct {
 }

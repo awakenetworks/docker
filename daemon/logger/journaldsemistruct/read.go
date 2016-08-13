@@ -1,6 +1,6 @@
 // +build linux,cgo,!static_build,journald
 
-package journald_semistruct
+package journaldsemistruct
 
 // #include <sys/types.h>
 // #include <sys/poll.h>

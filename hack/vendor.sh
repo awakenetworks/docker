@@ -96,7 +96,7 @@ clone git github.com/docker/containerd 9dc2b3273db42c75368988a3885a3afd770069d9
 
 # semistruct-parse
 clone git github.com/andyleap/parser db5a13a7cd464f69f3570d27ae1e4ee7c3d76092
-clone git github.com/awakenetworks/semistruct-parser 2cbebd08e941dbcb820800d2466fff44ea9e86d5
+clone git github.com/awakenetworks/semistruct-parser b52743ad55f7ef3fab1e8e319538f046c2dd27bc
 clone git github.com/leanovate/gopter 2dd77d26c7d5f346abfbf7247ad9bd7efbb85c3a
 
 clean
