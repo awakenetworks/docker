@@ -102,27 +102,33 @@ func (s *journald) Log(msg *logger.Message) error {
 	var priority journal.Priority
 
 	if parsedLog, err := parseSemistruct(line, s.parser); err == nil && parsedLog != nil {
-		res := parsedLog.(semistruct.Log)
+		res, ok := parsedLog.(semistruct.Log)
 
-		priority = journal.Priority(res.Priority)
-
-		journaldVars["TAGS"] = strings.Join(res.Tags, ":")
-
-		for k, v := range res.Attrs {
-			journaldVars[k] = v
+		if ok {
+			priority = journal.Priority(res.Priority)
+			journaldVars["TAGS"] = strings.Join(res.Tags, ":")
+			for k, v := range res.Attrs {
+				journaldVars[k] = v
+			}
+		} else {
+			priority = defaultPriority(msg.Source)
 		}
 	} else {
-		if msg.Source == "stderr" {
-			priority = journal.PriErr
-		} else {
-			priority = journal.PriInfo
-		}
+		priority = defaultPriority(msg.Source)
 	}
 
 	// NOTE: we always send the whole line to journald even though
 	// it's semi-structured, the fact that we have some structure to
 	// parse just gives us more fields to filter by with journalctl.
 	return journal.Send(line, priority, journaldVars)
+}
+
+func defaultPriority(source string) journal.Priority {
+	if msg.Source == "stderr" {
+		return journal.PriErr
+	} else {
+		return journal.PriInfo
+	}
 }
 
 func parseSemistruct(s string, parser *cp.Grammar) (cp.Match, error) {
