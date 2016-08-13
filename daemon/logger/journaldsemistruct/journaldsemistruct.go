@@ -101,7 +101,7 @@ func (s *journald) Log(msg *logger.Message) error {
 	// journald logging driver.
 	var priority journal.Priority
 
-	if semistructLine, err := parseSemistruct(line); err == nil && semistructLine != nil {
+	if semistructLine, err := parseSemistruct(line, s.parser); err == nil && semistructLine != nil {
 		res := semistructLine.(semistruct.Log)
 
 		priority = journal.Priority(res.Priority)
@@ -125,15 +125,15 @@ func (s *journald) Log(msg *logger.Message) error {
 	return journal.Send(line, priority, journaldVars)
 }
 
-func parseSemistruct(s string) cp.Match {
+func parseSemistruct(s string, parser *g.Grammar) (cp.Match, nil) {
 	// Peak at the first few characters, if they start with the
 	// sentinel then attempt a parse
-	if len(line) > 2 && line[:2] == "!<" {
-		if semistructLine, err = s.parser.ParseString(line); err != nil {
+	if len(s) > 2 && s[:2] == "!<" {
+		if parsedLine, err := parser.ParseString(s); err != nil {
 			logrus.Errorf("failed to parse semistructured log line: %v", err)
 			return nil, err
 		} else {
-			return semistructLine, nil
+			return parsedLine, nil
 		}
 	}
 }
