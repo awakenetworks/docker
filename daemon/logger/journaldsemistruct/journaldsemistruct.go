@@ -127,8 +127,7 @@ func (s *journald) Log(msg *logger.Message) error {
 
 func parseSemistruct(s string) cp.Match {
 	// Peak at the first few characters, if they start with the
-	// sentinel then attempt a parse, otherwise don't parse and just
-	// shove the whole line out to journald.
+	// sentinel then attempt a parse
 	if len(line) > 2 && line[:2] == "!<" {
 		if semistructLine, err = s.parser.ParseString(line); err != nil {
 			logrus.Errorf("failed to parse semistructured log line: %v", err)
